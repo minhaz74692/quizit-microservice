@@ -5,6 +5,7 @@ import com.mie.Quizit.Repository.QuizRepository;
 import com.mie.Quizit.model.Question;
 import com.mie.Quizit.model.QuestionWrapper;
 import com.mie.Quizit.model.Quiz;
+import com.mie.Quizit.model.QuizResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,5 +49,21 @@ private  final QuestionRepository questionRepository;
                 ).collect(Collectors.toList());
 
         return new ResponseEntity<>(questionsForUser, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Integer> getQuizResult(Long id,List<QuizResponse> response) {
+        Quiz quiz = quizRepository.findById(id).get();
+        List<Question> questions = quiz.getQuestions();
+        int result = 0;
+        int i = 0;
+
+        for(QuizResponse q:response){
+
+            if(q.getResponse().equals(questions.get(i).getCorrectAnswer()))
+                result++;
+            i++;
+        }
+
+        return  new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

@@ -2,6 +2,7 @@ package com.mie.Quizit.controller;
 
 import com.mie.Quizit.Service.QuizService;
 import com.mie.Quizit.model.QuestionWrapper;
+import com.mie.Quizit.model.QuizResponse;
 import com.mie.Quizit.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,5 +27,10 @@ public class QuizController {
     @GetMapping("get/{id}")
     public  ResponseEntity<List<QuestionWrapper>> getQuizById(@PathVariable Long id){
         return  quizService.getQuizById(id);
+    }
+
+    @PostMapping("submit/{id}")
+    public ResponseEntity<Integer> getQuizResult(@PathVariable Long id, @RequestBody List<QuizResponse> response){
+        return  quizService.getQuizResult(id,response);
     }
 }
