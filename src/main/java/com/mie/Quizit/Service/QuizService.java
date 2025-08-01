@@ -3,13 +3,17 @@ package com.mie.Quizit.Service;
 import com.mie.Quizit.Repository.QuestionRepository;
 import com.mie.Quizit.Repository.QuizRepository;
 import com.mie.Quizit.model.Question;
+import com.mie.Quizit.model.QuestionWrapper;
 import com.mie.Quizit.model.Quiz;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +31,22 @@ private  final QuestionRepository questionRepository;
 
         quizRepository.save(quiz);
        return new ResponseEntity<>("Success", HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<List<QuestionWrapper>> getQuizById(Long id) {
+        Optional<Quiz> quiz = quizRepository.findById(id);
+        List<Question> questionsFromDB = quiz.get().getQuestions();
+        List<QuestionWrapper> questionsForUser =  questionsFromDB.stream()
+                .map(q ->  QuestionWrapper.builder()
+                        .id(q.getId())
+                        .title(q.getTitle())
+                        .description(q.getDescription())
+                        .difficultyLevel(q.getDifficultyLevel())
+                        .category(q.getCategory())
+                        .options(q.getOptions())
+                        .build()
+                ).collect(Collectors.toList());
+
+        return new ResponseEntity<>(questionsForUser, HttpStatus.OK);
     }
 }
